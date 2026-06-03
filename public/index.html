@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Servicios 2ML – Tu centro de trámites y servicios</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --azul-oscuro: #0a2a5e;
+      --azul-medio: #1a4a9e;
+      --azul-claro: #2e6fd4;
+      --azul-suave: #e8f0fe;
+      --azul-acento: #0d6efd;
+      --blanco: #ffffff;
+      --gris-claro: #f4f6fb;
+      --gris-texto: #555;
+      --verde: #2ecc71;
+      --rojo: #e74c3c;
+      --sombra: 0 4px 20px rgba(10,42,94,0.10);
+      --sombra-hover: 0 8px 32px rgba(10,42,94,0.18);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Open Sans',sans-serif; background:#f4f6fb; color:#222; }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-medio) 100%);
+      padding: 0 2rem;
+      position: sticky; top:0; z-index:1000;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+    }
+    .navbar-inner {
+      max-width:1300px; margin:0 auto;
+      display:flex; align-items:center; justify-content:space-between;
+      height:70px; gap:1.5rem;
+    }
+    .logo {
+      font-family:'Montserrat',sans-serif;
+      font-weight:900; font-size:1.6rem;
+      color:var(--blanco);
+      text-decoration:none; letter-spacing:-0.5px;
+      display:flex; align-items:center; gap:0.5rem;
+    }
+    .logo span { color:#5db8ff; }
+    .navbar-search {
+      flex:1; max-width:560px;
+      display:flex; background:#fff; border-radius:8px; overflow:hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .navbar-search input {
+      flex:1; border:none; outline:none; padding:0.65rem 1rem;
+      font-size:0.95rem; font-family:inherit;
+    }
+    .navbar-search button {
+      background:var(--azul-claro); border:none; color:#fff;
+      padding:0 1.1rem; cursor:pointer; font-size:1.1rem;
+      transition: background 0.2s;
+    }
+    .navbar-search button:hover { background:var(--azul-oscuro); }
+    .nav-links { display:flex; gap:0.5rem; }
+    .nav-btn {
+      background: rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.3);
+      color:#fff; padding:0.5rem 1.1rem; border-radius:6px;
+      font-family:'Montserrat',sans-serif; font-weight:600; font-size:0.88rem;
+      cursor:pointer; text-decoration:none; transition:all 0.2s;
+      display:inline-flex; align-items:center; gap:0.4rem;
+    }
+    .nav-btn:hover { background:rgba(255,255,255,0.22); }
+    .nav-btn.activo { background:var(--azul-acento); border-color:var(--azul-acento); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-claro) 60%, #1e90ff 100%);
+      color:#fff; padding:4rem 2rem 5rem; position:relative; overflow:hidden;
+    }
+    .hero::before {
+      content:''; position:absolute; inset:0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-inner {
+      max-width:1300px; margin:0 auto;
+      display:flex; align-items:center; gap:3rem; position:relative;
+    }
+    .hero-text { flex:1; }
+    .hero-badge {
+      display:inline-block; background:rgba(255,255,255,0.18);
+      border:1px solid rgba(255,255,255,0.3); border-radius:20px;
+      padding:0.3rem 1rem; font-size:0.82rem; font-weight:600;
+      margin-bottom:1rem; letter-spacing:0.5px;
+    }
+    .hero-text h1 {
+      font-family:'Montserrat',sans-serif;
+      font-size:clamp(2rem,4vw,3.2rem); font-weight:900;
+      line-height:1.1; margin-bottom:1rem;
+    }
+    .hero-text h1 span { color:#5db8ff; }
+    .hero-text p {
+      font-size:1.05rem; line-height:1.7; max-width:540px;
+      opacity:0.9; margin-bottom:2rem;
+    }
+    .hero-cta {
+      display:inline-block; background:#fff; color:var(--azul-oscuro);
+      font-family:'Montserrat',sans-serif; font-weight:700;
+      padding:0.85rem 2rem; border-radius:8px; text-decoration:none;
+      font-size:1rem; transition:transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .hero-cta:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.25); }
+    .hero-images {
+      flex:1; display:grid; grid-template-columns:1fr 1fr; gap:1rem;
+      max-width:420px;
+    }
+    .hero-img-slot {
+      background:rgba(255,255,255,0.12); border:2px dashed rgba(255,255,255,0.25);
+      border-radius:12px; aspect-ratio:4/3;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font-size:0.8rem; opacity:0.7; gap:0.4rem;
+    }
+    .hero-img-slot .icon { font-size:1.8rem; }
+    .hero-img-slot:first-child { grid-column:span 2; aspect-ratio:16/7; }
+
+    /* ── STATS ── */
+    .stats-bar {
+      background:var(--azul-oscuro);
+      padding:1rem 2rem;
+    }
+    .stats-inner {
+      max-width:1300px; margin:0 auto;
+      display:flex; justify-content:center; gap:3rem; flex-wrap:wrap;
+    }
+    .stat { text-align:center; color:#fff; }
+    .stat strong { display:block; font-family:'Montserrat',sans-serif; font-size:1.5rem; font-weight:900; color:#5db8ff; }
+    .stat span { font-size:0.8rem; opacity:0.8; }
+
+    /* ── SECCIÓN SERVICIOS ── */
+    .section {
+      max-width:1300px; margin:0 auto;
+      padding:2.5rem 2rem;
+    }
+    .section-title {
+      font-family:'Montserrat',sans-serif;
+      font-size:1.5rem; font-weight:800;
+      color:var(--azul-oscuro); margin-bottom:0.5rem;
+      display:flex; align-items:center; gap:0.7rem;
+    }
+    .section-title::after {
+      content:''; flex:1; height:2px;
+      background:linear-gradient(90deg, var(--azul-claro), transparent);
+    }
+    .section-sub { color:var(--gris-texto); margin-bottom:1.5rem; font-size:0.93rem; }
+
+    /* ── FILTROS ── */
+    .filtros {
+      display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.5rem;
+    }
+    .filtro-btn {
+      background:var(--blanco); border:1.5px solid #d0d9ee;
+      color:var(--azul-medio); padding:0.4rem 1rem; border-radius:20px;
+      font-size:0.85rem; font-weight:600; cursor:pointer;
+      transition:all 0.2s; font-family:inherit;
+    }
+    .filtro-btn:hover, .filtro-btn.activo {
+      background:var(--azul-medio); color:#fff; border-color:var(--azul-medio);
+    }
+
+    /* ── GRID SERVICIOS ── */
+    .servicios-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap:1.2rem;
+    }
+    .servicio-card {
+      background:#fff; border-radius:12px;
+      border:1.5px solid #e3eaf7;
+      cursor:pointer; transition:all 0.25s;
+      overflow:hidden;
+      box-shadow: var(--sombra);
+      display:flex; flex-direction:column;
+    }
+    .servicio-card:hover {
+      transform:translateY(-4px);
+      box-shadow: var(--sombra-hover);
+      border-color:var(--azul-claro);
+    }
+    .card-img {
+      width:100%; aspect-ratio:4/3;
+      background:var(--azul-suave);
+      display:flex; align-items:center; justify-content:center;
+      padding:1.5rem;
+    }
+    .card-img img { width:72px; height:72px; object-fit:contain; }
+    .card-body { padding:1rem; flex:1; display:flex; flex-direction:column; gap:0.4rem; }
+    .card-codigo { font-size:0.72rem; color:#888; font-weight:600; letter-spacing:0.5px; }
+    .card-nombre {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.92rem; font-weight:700; color:var(--azul-oscuro);
+      line-height:1.3;
+    }
+    .card-precio { font-size:0.88rem; color:var(--azul-claro); font-weight:600; }
+    .card-badge {
+      display:inline-flex; align-items:center; gap:0.3rem;
+      font-size:0.72rem; font-weight:700; padding:0.2rem 0.6rem;
+      border-radius:20px; width:fit-content;
+    }
+    .badge-disponible { background:#e6faf0; color:#1a8a4a; }
+    .badge-no-disponible { background:#fde8e8; color:#c0392b; }
+    .card-ver-mas {
+      margin-top:auto; background:var(--azul-suave); color:var(--azul-medio);
+      border:none; border-radius:6px; padding:0.5rem;
+      font-family:'Montserrat',sans-serif; font-weight:700; font-size:0.82rem;
+      cursor:pointer; transition:all 0.2s; width:100%;
+    }
+    .card-ver-mas:hover { background:var(--azul-claro); color:#fff; }
+
+    /* ── MODAL DETALLE (tipo Amazon) ── */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(5,20,50,0.6); backdrop-filter:blur(3px);
+      z-index:2000; padding:1rem;
+      align-items:center; justify-content:center;
+    }
+    .modal-overlay.abierto { display:flex; }
+    .modal {
+      background:#fff; border-radius:16px;
+      max-width:900px; width:100%; max-height:90vh;
+      overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.35);
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform:translateY(30px); opacity:0; }
+      to   { transform:translateY(0); opacity:1; }
+    }
+    .modal-header {
+      background:linear-gradient(135deg,var(--azul-oscuro),var(--azul-medio));
+      color:#fff; padding:1rem 1.5rem;
+      display:flex; align-items:center; justify-content:space-between;
+      border-radius:16px 16px 0 0;
+    }
+    .modal-header h2 { font-family:'Montserrat',sans-serif; font-size:1rem; }
+    .modal-close {
+      background:rgba(255,255,255,0.2); border:none; color:#fff;
+      width:34px; height:34px; border-radius:50%; cursor:pointer;
+      font-size:1.1rem; transition:background 0.2s;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .modal-close:hover { background:rgba(255,255,255,0.35); }
+    .modal-body {
+      display:grid; grid-template-columns:1fr 1.2fr;
+      gap:2rem; padding:2rem;
+    }
+    .modal-img-wrap {
+      background:var(--azul-suave); border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      padding:2.5rem; aspect-ratio:1;
+    }
+    .modal-img-wrap img { width:120px; height:120px; object-fit:contain; }
+    .modal-info { display:flex; flex-direction:column; gap:1rem; }
+    .modal-codigo { font-size:0.82rem; color:#888; font-weight:600; }
+    .modal-nombre {
+      font-family:'Montserrat',sans-serif;
+      font-size:1.6rem; font-weight:900; color:var(--azul-oscuro);
+      line-height:1.2;
+    }
+    .modal-precio-label { font-size:0.85rem; color:#777; }
+    .modal-precio {
+      font-family:'Montserrat',sans-serif;
+      font-size:2rem; font-weight:900; color:var(--azul-claro);
+    }
+    .modal-divider { height:1px; background:#e8edf5; }
+    .modal-desc-title {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.9rem; font-weight:700; color:var(--azul-oscuro);
+    }
+    .modal-desc { font-size:0.95rem; line-height:1.7; color:#444; }
+    .modal-estado {
+      display:inline-flex; align-items:center; gap:0.5rem;
+      font-weight:700; font-size:0.95rem; padding:0.5rem 1.2rem;
+      border-radius:8px; width:fit-content;
+    }
+    .estado-disponible { background:#e6faf0; color:#1a8a4a; border:1.5px solid #a3e6c0; }
+    .estado-no-disponible { background:#fde8e8; color:#c0392b; border:1.5px solid #f5aaaa; }
+    .modal-contacto {
+      background:var(--azul-suave); border-radius:10px;
+      padding:1rem; font-size:0.88rem; color:var(--azul-medio);
+      border-left:4px solid var(--azul-claro);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background:var(--azul-oscuro); color:rgba(255,255,255,0.8);
+      padding:2.5rem 2rem 1.5rem; margin-top:3rem;
+    }
+    .footer-inner {
+      max-width:1300px; margin:0 auto;
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:2rem; margin-bottom:2rem;
+    }
+    .footer-col h4 {
+      font-family:'Montserrat',sans-serif; color:#fff;
+      font-size:1rem; margin-bottom:0.8rem;
+    }
+    .footer-col p, .footer-col a {
+      font-size:0.87rem; line-height:1.8; display:block;
+      color:rgba(255,255,255,0.7); text-decoration:none;
+    }
+    .footer-col a:hover { color:#fff; }
+    .footer-bottom {
+      border-top:1px solid rgba(255,255,255,0.15);
+      padding-top:1.2rem; text-align:center; font-size:0.82rem;
+      color:rgba(255,255,255,0.5);
+    }
+
+    /* ── LOADING ── */
+    .loading {
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; padding:4rem; gap:1rem; color:var(--azul-medio);
+    }
+    .spinner {
+      width:40px; height:40px; border:4px solid var(--azul-suave);
+      border-top-color:var(--azul-claro); border-radius:50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px) {
+      .navbar-search { display:none; }
+      .hero-inner { flex-direction:column; }
+      .hero-images { max-width:100%; }
+      .modal-body { grid-template-columns:1fr; }
+      .stats-inner { gap:1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="logo">Servicios <span>2ML</span></a>
+    <div class="navbar-search">
+      <input type="text" id="searchInput" placeholder="Buscar servicios..." oninput="filtrarBusqueda(this.value)" />
+      <button>🔍</button>
+    </div>
+    <div class="nav-links">
+      <a href="#servicios" class="nav-btn activo">📋 Catálogo</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">✦ Trámites rápidos y confiables en Guatemala</div>
+      <h1>Bienvenido a<br/><span>Servicios 2ML</span></h1>
+      <p>Tu aliado de confianza para trámites, gestiones y servicios financieros. Rápido, seguro y al alcance de tu mano.</p>
+      <a href="#servicios" class="hero-cta">Ver todos los servicios →</a>
+    </div>
+    <div class="hero-images">
+      <div class="hero-img-slot">
+        <div class="icon">🖼️</div>
+        <div>Imagen principal aquí</div>
+      </div>
+      <div class="hero-img-slot">
+        <div class="icon">📷</div>
+        <div>Imagen 2</div>
+      </div>
+      <div class="hero-img-slot">
+        <div class="icon">📷</div>
+        <div>Imagen 3</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATS ══ -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat"><strong>14+</strong><span>Servicios disponibles</span></div>
+    <div class="stat"><strong>100%</strong><span>Atención personalizada</span></div>
+    <div class="stat"><strong>Rápido</strong><span>Trámites al instante</span></div>
+    <div class="stat"><strong>Q</strong><span>Precios en Quetzales</span></div>
+  </div>
+</div>
+
+<!-- ══ CATÁLOGO ══ -->
+<section class="section" id="servicios">
+  <div class="section-title">📋 Nuestros Servicios</div>
+  <p class="section-sub">Haz clic en cualquier servicio para ver toda la información detallada.</p>
+
+  <div class="filtros">
+    <button class="filtro-btn activo" onclick="filtrarCategoria('todos', this)">Todos</button>
+    <button class="filtro-btn" onclick="filtrarCategoria('disponible', this)">✅ Disponibles</button>
+    <button class="filtro-btn" onclick="filtrarCategoria('no-disponible', this)">⏸ No disponibles</button>
+  </div>
+
+  <div id="serviciosGrid" class="servicios-grid">
+    <div class="loading">
+      <div class="spinner"></div>
+      <span>Cargando servicios...</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MODAL DETALLE ══ -->
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalCodigo">Detalle del servicio</h2>
+      <button class="modal-close" onclick="cerrarModalBtn()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-img-wrap">
+        <img id="modalImg" src="" alt="Servicio" />
+      </div>
+      <div class="modal-info">
+        <div class="modal-codigo" id="modalCodigoTexto"></div>
+        <div class="modal-nombre" id="modalNombre"></div>
+        <div>
+          <div class="modal-precio-label">Precio del servicio</div>
+          <div class="modal-precio" id="modalPrecio"></div>
+        </div>
+        <div class="modal-divider"></div>
+        <div class="modal-desc-title">Descripción del servicio</div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-divider"></div>
+        <div id="modalEstado"></div>
+        <div class="modal-contacto">
+          📍 Visítanos en nuestra oficina para más información.<br/>
+          ⏰ Atención de lunes a viernes de 8:00 a 17:00 hrs.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>Servicios 2ML</h4>
+      <p>Tu centro de trámites y servicios de confianza en Guatemala. Rápido, seguro y accesible.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Servicios Principales</h4>
+      <a href="#servicios">Certificaciones RENAP</a>
+      <a href="#servicios">Pagos SAT</a>
+      <a href="#servicios">Antecedentes Penales</a>
+      <a href="#servicios">Remesas y Depósitos</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <p>📍 Guatemala</p>
+      <p>⏰ Lun–Vie: 8:00–17:00</p>
+      <p>⏰ Sáb: 8:00–13:00</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2024 Servicios 2ML. Todos los derechos reservados.
+  </div>
+</footer>
+
+<script>
+  let todosLosServicios = [];
+  let filtroActual = 'todos';
+
+  async function cargarServicios() {
+    try {
+      const res = await fetch('/api/servicios');
+      todosLosServicios = await res.json();
+      renderServicios(todosLosServicios);
+    } catch (e) {
+      document.getElementById('serviciosGrid').innerHTML =
+        '<p style="padding:2rem;color:#e74c3c;">❌ Error al cargar servicios. Verifica la conexión.</p>';
+    }
+  }
+
+  function renderServicios(lista) {
+    const grid = document.getElementById('serviciosGrid');
+    if (!lista.length) {
+      grid.innerHTML = '<p style="padding:2rem;color:#888;">No se encontraron servicios.</p>';
+      return;
+    }
+    grid.innerHTML = lista.map(s => `
+      <div class="servicio-card" onclick="abrirModal('${s.codigo}')">
+        <div class="card-img">
+          <img src="${s.imagen_url || 'https://img.icons8.com/fluency/96/service.png'}"
+               alt="${s.nombre}" onerror="this.src='https://img.icons8.com/fluency/96/service.png'" />
+        </div>
+        <div class="card-body">
+          <div class="card-codigo">${s.codigo}</div>
+          <div class="card-nombre">${s.nombre}</div>
+          <div class="card-precio">${formatPrecio(s.precio_min, s.precio_max)}</div>
+          <div class="card-badge ${s.disponible ? 'badge-disponible' : 'badge-no-disponible'}">
+            ${s.disponible ? '✅ Disponible' : '⏸ No disponible'}
+          </div>
+          <button class="card-ver-mas">Ver más →</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function formatPrecio(min, max) {
+    if (!min && !max) return 'Consultar precio';
+    if (min == max || !max) return `Q ${parseFloat(min).toFixed(2)}`;
+    return `Q ${parseFloat(min).toFixed(2)} – Q ${parseFloat(max).toFixed(2)}`;
+  }
+
+  function abrirModal(codigo) {
+    const s = todosLosServicios.find(x => x.codigo === codigo);
+    if (!s) return;
+    document.getElementById('modalCodigo').textContent = s.nombre;
+    document.getElementById('modalCodigoTexto').textContent = `Código: ${s.codigo}`;
+    document.getElementById('modalNombre').textContent = s.nombre;
+    document.getElementById('modalPrecio').textContent = formatPrecio(s.precio_min, s.precio_max);
+    document.getElementById('modalDesc').textContent = s.descripcion || 'Sin descripción disponible.';
+    document.getElementById('modalImg').src = s.imagen_url || 'https://img.icons8.com/fluency/96/service.png';
+    document.getElementById('modalEstado').innerHTML = `
+      <div class="modal-estado ${s.disponible ? 'estado-disponible' : 'estado-no-disponible'}">
+        ${s.disponible ? '✅ Servicio disponible' : '⏸ Servicio temporalmente no disponible'}
+      </div>`;
+    document.getElementById('modalOverlay').classList.add('abierto');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarModal(e) {
+    if (e.target === document.getElementById('modalOverlay')) cerrarModalBtn();
+  }
+
+  function cerrarModalBtn() {
+    document.getElementById('modalOverlay').classList.remove('abierto');
+    document.body.style.overflow = '';
+  }
+
+  function filtrarCategoria(tipo, btn) {
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    filtroActual = tipo;
+    aplicarFiltros();
+  }
+
+  function filtrarBusqueda(q) {
+    aplicarFiltros(q);
+  }
+
+  function aplicarFiltros(q = document.getElementById('searchInput').value) {
+    let lista = [...todosLosServicios];
+    if (filtroActual === 'disponible') lista = lista.filter(s => s.disponible);
+    if (filtroActual === 'no-disponible') lista = lista.filter(s => !s.disponible);
+    if (q.trim()) {
+      const lower = q.toLowerCase();
+      lista = lista.filter(s =>
+        s.nombre.toLowerCase().includes(lower) ||
+        s.descripcion?.toLowerCase().includes(lower) ||
+        s.codigo.toLowerCase().includes(lower)
+      );
+    }
+    renderServicios(lista);
+  }
+
+  document.addEventListener('keydown', e => { if(e.key==='Escape') cerrarModalBtn(); });
+  cargarServicios();
+</script>
+</body>
+</html>

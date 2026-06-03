@@ -190,6 +190,24 @@
     }
     .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color:var(--azul-claro); }
     .form-group textarea { resize:vertical; min-height:90px; }
+    .image-preview {
+      width:100%; min-height:120px; border:2px dashed #dde3f0;
+      border-radius:12px; display:flex; align-items:center; justify-content:center;
+      padding:0.75rem; background:#fbfdff; color:#6f7d95; overflow:hidden;
+    }
+    .image-preview img {
+      max-width:100%; max-height:120px; object-fit:contain; display:none;
+      border-radius:10px;
+    }
+    .image-preview.has-image span { display:none; }
+    .image-preview.has-image img { display:block; }
+    .btn-upload {
+      margin-top:0.75rem; background:var(--azul-claro); color:#fff;
+      border:none; border-radius:8px; padding:0.72rem 0.95rem;
+      cursor:pointer; font-weight:700; width:100%;
+      transition:background 0.2s;
+    }
+    .btn-upload:hover { background:var(--azul-oscuro); }
     .codigo-display {
       background:var(--azul-suave); color:var(--azul-oscuro);
       padding:0.65rem 0.9rem; border-radius:8px;
@@ -346,6 +364,21 @@
       <div class="form-group">
         <label>URL de imagen</label>
         <input type="text" id="fImagen" placeholder="https://..." />
+        <small style="color:#666;font-size:0.82rem;">Pega una URL de imagen o utiliza el archivo desde tu PC.</small>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subir imagen desde tu PC</label>
+          <input type="file" id="fImagenFile" accept="image/*" onchange="previewImagenLocal(event)" />
+          <button type="button" class="btn-upload" onclick="subirImagenDesdePC()">📁 Subir archivo</button>
+        </div>
+        <div class="form-group">
+          <label>Previsualización</label>
+          <div class="image-preview" id="previewContainer">
+            <span>Sin imagen seleccionada</span>
+            <img id="fImagenPreview" src="" alt="Vista previa" />
+          </div>
+        </div>
       </div>
       <div class="form-group">
         <label>Disponibilidad</label>
@@ -481,6 +514,8 @@
     document.getElementById('fPrecioMin').value = '';
     document.getElementById('fPrecioMax').value = '';
     document.getElementById('fImagen').value = '';
+    document.getElementById('fImagenFile').value = '';
+    setPreviewImagen('');
     document.getElementById('fDisponible').value = 'true';
     document.getElementById('btnConfirmForm').textContent = 'Agregar servicio';
     document.getElementById('btnConfirmForm').className = 'btn-confirm';
@@ -500,7 +535,9 @@
     document.getElementById('fPrecioMin').value = s.precio_min || '';
     document.getElementById('fPrecioMax').value = s.precio_max || '';
     document.getElementById('fImagen').value = s.imagen_url || '';
+    document.getElementById('fImagenFile').value = '';
     document.getElementById('fDisponible').value = s.disponible ? 'true' : 'false';
+    setPreviewImagen(s.imagen_url || '');
     document.getElementById('btnConfirmForm').textContent = 'Guardar cambios';
     document.getElementById('btnConfirmForm').className = 'btn-confirm';
     document.getElementById('modalForm').classList.add('abierto');
@@ -508,6 +545,8 @@
 
   function cerrarModalForm() {
     document.getElementById('modalForm').classList.remove('abierto');
+    document.getElementById('fImagenFile').value = '';
+    setPreviewImagen('');
   }
 
   // ─ PEDIR CONFIRMACIÓN al guardar ─
@@ -579,6 +618,21 @@
       disponible: document.getElementById('fDisponible').value === 'true'
     };
 
+    const fileInput = document.getElementById('fImagenFile');
+    if (fileInput.files.length > 0) {
+      const formData = new FormData();
+      formData.append('imagen', fileInput.files[0]);
+      const uploadRes = await fetch('/api/admin/servicios/upload', { method: 'POST', body: formData });
+      if (!uploadRes.ok) {
+        const errorJson = await uploadRes.json().catch(() => null);
+        alert('❌ No se pudo subir la imagen. ' + (errorJson?.error || 'Intenta de nuevo.'));
+        return;
+      }
+      const uploadData = await uploadRes.json();
+      datos.imagen_url = uploadData.url;
+      document.getElementById('fImagen').value = datos.imagen_url;
+    }
+
     try {
       let res;
       if (modoEdicion) {
@@ -633,6 +687,53 @@
       box-shadow:0 8px 24px rgba(0,0,0,0.3);animation:slideUp 0.3s ease;font-family:Montserrat,sans-serif`;
     document.body.appendChild(t);
     setTimeout(() => t.remove(), 3000);
+  }
+
+  function setPreviewImagen(src) {
+    const preview = document.getElementById('previewContainer');
+    const img = document.getElementById('fImagenPreview');
+    if (!src) {
+      img.src = '';
+      preview.classList.remove('has-image');
+      return;
+    }
+    img.src = src;
+    preview.classList.add('has-image');
+  }
+
+  function previewImagenLocal(event) {
+    const file = event.target.files[0];
+    if (!file) {
+      setPreviewImagen('');
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setPreviewImagen(url);
+  }
+
+  async function subirImagenDesdePC() {
+    const fileInput = document.getElementById('fImagenFile');
+    if (!fileInput.files.length) {
+      alert('Selecciona primero un archivo de imagen para subir.');
+      return;
+    }
+    const formData = new FormData();
+    formData.append('imagen', fileInput.files[0]);
+
+    try {
+      const res = await fetch('/api/admin/servicios/upload', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        alert('❌ Error al subir la imagen. ' + (err?.error || 'Intenta de nuevo.'));
+        return;
+      }
+      const data = await res.json();
+      document.getElementById('fImagen').value = data.url;
+      setPreviewImagen(data.url);
+      mostrarToast('✅ Imagen cargada y URL actualizada');
+    } catch (e) {
+      alert('❌ Error de conexión al subir la imagen.');
+    }
   }
 </script>
 </body>

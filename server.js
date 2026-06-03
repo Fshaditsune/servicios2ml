@@ -5,6 +5,8 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
+const multer = require('multer');
+const fs = require('fs');
 const path = require('path');
 
 const app = express();
@@ -71,8 +73,8 @@ async function initDB() {
         { codigo: 'S2ML-001', nombre: 'Certificaciones de Nacimiento', descripcion: 'Tramitamos tu certificación de nacimiento ante el RENAP. Servicio rápido y confiable. Necesitas traer tu DPI original y copia.', precio_min: 15.00, precio_max: 25.00, imagen_url: 'https://img.icons8.com/fluency/96/birth-certificate.png' },
         { codigo: 'S2ML-002', nombre: 'Pagos de la SAT', descripcion: 'Realizamos tus pagos a la Superintendencia de Administración Tributaria (SAT). Incluye pagos de impuestos, declaraciones y más.', precio_min: 10.00, precio_max: 20.00, imagen_url: 'https://img.icons8.com/fluency/96/tax.png' },
         { codigo: 'S2ML-003', nombre: 'Antecedentes Penales', descripcion: 'Gestión de constancia de antecedentes penales en línea. Documento oficial emitido por el Ministerio de Gobernación de Guatemala.', precio_min: 15.00, precio_max: 20.00, imagen_url: 'https://img.icons8.com/fluency/96/police-badge.png' },
-        { codigo: 'S2ML-004', nombre: 'Trámite de NIT', descripcion: 'Te ayudamos a solicitar tu Número de Identificación Tributaria (NIT) ante la SAT. Necesario para realizar facturas y trámites fiscales.', precio_min: 15.00, precio_max: 25.00, imagen_url: 'https://img.icons8.com/fluency/96/document.png' },
-        { codigo: 'S2ML-005', nombre: 'Antecedentes Policiacos', descripcion: 'Tramitamos tu constancia de antecedentes policiacos emitida por la Policía Nacional Civil (PNC) de Guatemala.', precio_min: 15.00, precio_max: 20.00, imagen_url: 'https://img.icons8.com/fluency/96/detective.png' },
+        { codigo: 'S2ML-004', nombre: 'Trámite de NIT', descripcion: 'Te ayudamos a solicitar tu Número de Identificación Tributaria (NIT) ante la SAT. Necesario para realizar facturas y trámites fiscales.', precio_min: 15.00, precio_max: 25.00, imagen_url: 'https://img.icons8.com/fluency/96/id-card.png' },
+        { codigo: 'S2ML-005', nombre: 'Antecedentes Policiacos', descripcion: 'Tramitamos tu constancia de antecedentes policiacos emitida por la Policía Nacional Civil (PNC) de Guatemala.', precio_min: 15.00, precio_max: 20.00, imagen_url: 'https://img.icons8.com/fluency/96/police-car.png' },
         { codigo: 'S2ML-006', nombre: 'Asesoría Contable', descripcion: 'Brindamos asesoría contable para empresas y personas individuales. Declaraciones, contabilidad general, planillas y más.', precio_min: 50.00, precio_max: 200.00, imagen_url: 'https://img.icons8.com/fluency/96/accounting.png' },
         { codigo: 'S2ML-007', nombre: 'Emplasticado', descripcion: 'Plastificado de documentos importantes como DPI, carné de vacunas, documentos personales y más. Protege tus documentos.', precio_min: 5.00, precio_max: 15.00, imagen_url: 'https://img.icons8.com/fluency/96/lamination.png' },
         { codigo: 'S2ML-008', nombre: 'Fotocopias', descripcion: 'Servicio de fotocopiado de documentos en blanco y negro y a color. Copias de alta calidad a precios accesibles.', precio_min: 0.50, precio_max: 2.00, imagen_url: 'https://img.icons8.com/fluency/96/copy.png' },
@@ -80,7 +82,7 @@ async function initDB() {
         { codigo: 'S2ML-010', nombre: 'Depósitos', descripcion: 'Realizamos depósitos a diferentes bancos del sistema bancario guatemalteco. Rápido, seguro y sin filas.', precio_min: 5.00, precio_max: 15.00, imagen_url: 'https://img.icons8.com/fluency/96/bank-building.png' },
         { codigo: 'S2ML-011', nombre: 'Retiro de Ahorro', descripcion: 'Gestión de retiros de cuentas de ahorro de diferentes entidades bancarias. Servicio ágil y seguro.', precio_min: 5.00, precio_max: 15.00, imagen_url: 'https://img.icons8.com/fluency/96/savings.png' },
         { codigo: 'S2ML-012', nombre: 'Pago de Cheques', descripcion: 'Cobro y gestión de cheques de diferentes bancos del sistema financiero guatemalteco.', precio_min: 10.00, precio_max: 20.00, imagen_url: 'https://img.icons8.com/fluency/96/cheque.png' },
-        { codigo: 'S2ML-013', nombre: 'Recargas Telefónicas', descripcion: 'Recargas para todas las operadoras: Tigo, Claro, Movistar y más. Inmediatas y al instante en cualquier monto.', precio_min: 5.00, precio_max: 100.00, imagen_url: 'https://img.icons8.com/fluency/96/phone-disconnected.png' },
+        { codigo: 'S2ML-013', nombre: 'Recargas Telefónicas', descripcion: 'Recargas para todas las operadoras: Tigo, Claro, Movistar y más. Inmediatas y al instante en cualquier monto.', precio_min: 5.00, precio_max: 100.00, imagen_url: 'https://img.icons8.com/fluency/96/phone.png' },
         { codigo: 'S2ML-014', nombre: 'Pago de Servicios', descripcion: 'Pago de luz (EEGSA, DEOCSA, DEORSA), teléfono, agua, internet, cable y muchos servicios más. Todo en un solo lugar.', precio_min: 5.00, precio_max: 15.00, imagen_url: 'https://img.icons8.com/fluency/96/electricity.png' }
       ];
 
@@ -161,6 +163,11 @@ function requireAuth(req, res, next) {
   if (!req.session.adminId) return res.status(401).json({ error: 'No autorizado' });
   next();
 }
+
+app.post('/api/admin/servicios/upload', requireAuth, upload.single('imagen'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No se recibió ninguna imagen' });
+  res.json({ url: `/uploads/${req.file.filename}` });
+});
 
 // ─── RUTAS DE ADMIN (inventario) ───────────────────────────────────────────────
 app.get('/api/admin/servicios', requireAuth, async (req, res) => {

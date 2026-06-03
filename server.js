@@ -164,10 +164,7 @@ function requireAuth(req, res, next) {
   next();
 }
 
-app.post('/api/admin/servicios/upload', requireAuth, upload.single('imagen'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No se recibió ninguna imagen' });
-  res.json({ url: `/uploads/${req.file.filename}` });
-});
+
 
 // ─── RUTAS DE ADMIN (inventario) ───────────────────────────────────────────────
 app.get('/api/admin/servicios', requireAuth, async (req, res) => {
